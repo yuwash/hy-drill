@@ -45,6 +45,7 @@
 
 
 (import math)
+(import org_learn)
 
 
 ;;;   In the SM5 algorithm, the initial interval after the first
@@ -164,7 +165,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
                      (inc total-repeats))
                 quality))
 
-  (setv next-ef (modify-e-factor ef quality))
+  (setv next-ef (org_learn.modify-e-factor ef quality))
   (setv old-ef ef)
   (setv new-of (modify-of (get-optimal-factor-sm5 n ef of-matrix)
                            quality org-drill-learn-fraction))
