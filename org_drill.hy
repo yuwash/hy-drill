@@ -44,25 +44,25 @@
 ;;; See the file README.org for more detailed documentation.
 
 
-(defcustom org-drill-sm5-initial-interval
-  4.0
-  "In the SM5 algorithm, the initial interval after the first
-successful presentation of an item is always 4 days. If you wish to change
-this, you can do so here."
-  :group 'org-drill
-  :type 'float)
+;;;   In the SM5 algorithm, the initial interval after the first
+;;; successful presentation of an item is always 4 days. If you wish to change
+;;; this, you can do so here.
+;;;   :group 'org-drill
+;;;   :type 'float
+(def org-drill-sm5-initial-interval
+  4.0)
 
 
-(defcustom org-drill-learn-fraction
-  0.5
-  "Fraction between 0 and 1 that governs how quickly the spaces
-between successive repetitions increase, for all items. The
-default value is 0.5. Higher values make spaces increase more
-quickly with each successful repetition. You should only change
-this in small increments (for example 0.05-0.1) as it has an
-exponential effect on inter-repetition spacing."
-  :group 'org-drill
-  :type 'float)
+;;;   Fraction between 0 and 1 that governs how quickly the spaces
+;;; between successive repetitions increase, for all items. The
+;;; default value is 0.5. Higher values make spaces increase more
+;;; quickly with each successful repetition. You should only change
+;;; this in small increments (for example 0.05-0.1) as it has an
+;;; exponential effect on inter-repetition spacing.
+;;;   :group 'org-drill
+;;;   :type 'float
+(def org-drill-learn-fraction
+  0.5)
 
 
 ;;; SM2 Algorithm =============================================================
