@@ -84,7 +84,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 - REPEATS is incremented by 1.
 - EF is modified based on the recall quality for the item.
 - OF-MATRIX is not modified."
-  (if (zerop n) (setq n 1))
+  (if (zero? n) (setq n 1))
   (if (null ef) (setq ef 2.5))
   (setq meanq (if meanq
                   (/ (+ quality (* meanq total-repeats 1.0))
@@ -151,7 +151,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 (defn determine-next-interval-sm5 (last-interval n ef quality
                                                   failures meanq total-repeats
                                                   of-matrix &optional delta-days)
-  (if (zerop n) (setq n 1))
+  (if (zero? n) (setq n 1))
   (if (null ef) (setq ef 2.5))
   (assert (> n 0))
   (assert (and (>= quality 0) (<= quality 5)))
@@ -274,8 +274,8 @@ See the documentation for `org-drill-get-item-data' for a description of these."
     (incf failures)
     (setf repeats 0
           next-interval -1)]
-   [(or (zerop repeats)
-        (zerop last-interval))
+   [(or (zero? repeats)
+        (zero? last-interval))
     (setf next-interval (org-drill-simple8-first-interval failures))
     (incf repeats)
     (incf totaln)]
