@@ -45,6 +45,7 @@
 
 
 (import math)
+(import copy)
 (import org_learn)
 
 
@@ -158,7 +159,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
   (assert (and (>= quality 0) (<= quality 5)))
   (unless of-matrix
     (setv of-matrix org-drill-sm5-optimal-factor-matrix))
-  (setv of-matrix (cl-copy-tree of-matrix))
+  (setv of-matrix (copy.deepcopy of-matrix))
 
   (setv meanq (if meanq
                   (/ (+ quality (* meanq total-repeats 1.0))
