@@ -44,6 +44,9 @@
 ;;; See the file README.org for more detailed documentation.
 
 
+(import math)
+
+
 ;;;   In the SM5 algorithm, the initial interval after the first
 ;;; successful presentation of an item is always 4 days. If you wish to change
 ;;; this, you can do so here.
@@ -215,7 +218,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 
 Returns the optimal FIRST interval for an item which has previously been
 forgotten on FAILURES occasions."
-  (* 2.4849 (exp (* -0.057 failures))))
+  (* 2.4849 (math.exp (* -0.057 failures))))
 
 
 (defn org-drill-simple8-interval-factor (ease repetition)
@@ -226,15 +229,15 @@ forgotten on FAILURES occasions."
 Returns:
 The factor by which the last interval should be
 multiplied to give the next interval. Corresponds to `RF' or `OF'."
-  (+ 1.2 (* (- ease 1.2) (expt org-drill-learn-fraction (log repetition 2)))))
+  (+ 1.2 (* (- ease 1.2) (math.pow org-drill-learn-fraction (math.log repetition 2)))))
 
 
 (defn org-drill-simple8-quality->ease (quality)
   "Returns the ease (`AF' in the SM8 algorithm) which corresponds
 to a mean item quality of QUALITY."
-  (+ (* 0.0542 (expt quality 4))
-     (* -0.4848 (expt quality 3))
-     (* 1.4916 (expt quality 2))
+  (+ (* 0.0542 (math.pow quality 4))
+     (* -0.4848 (math.pow quality 3))
+     (* 1.4916 (math.pow quality 2))
      (* -1.2403 quality)
      1.4515))
 
