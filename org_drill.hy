@@ -88,14 +88,14 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
   (if (none? ef) (setv ef 2.5))
   (setv meanq (if meanq
                   (/ (+ quality (* meanq total-repeats 1.0))
-                     (1+ total-repeats))
+                     (inc total-repeats))
                 quality))
   (assert (> n 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (if (<= quality org-drill-failure-quality)
       ;; When an item is failed, its interval is reset to 0,
       ;; but its EF is unchanged
-      (list -1 1 ef (1+ failures) meanq (1+ total-repeats)
+      (list -1 1 ef (inc failures) meanq (inc total-repeats)
             org-drill-sm5-optimal-factor-matrix)
     ;; else:
     (setv next-ef (modify-e-factor ef quality))
@@ -117,9 +117,9 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
               (+ last-interval (* (- interval last-interval)
                                   (org-drill-random-dispersal-factor)))
             interval)
-          (1+ n)
+          (inc n)
           next-ef
-          failures meanq (1+ total-repeats)
+          failures meanq (inc total-repeats)
           org-drill-sm5-optimal-factor-matrix)))
 
 
@@ -161,7 +161,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 
   (setv meanq (if meanq
                   (/ (+ quality (* meanq total-repeats 1.0))
-                     (1+ total-repeats))
+                     (inc total-repeats))
                 quality))
 
   (setv next-ef (modify-e-factor ef quality))
@@ -186,25 +186,25 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
   (cond
    ;; "Failed" -- reset repetitions to 0,
    [(<= quality org-drill-failure-quality)
-    (list -1 1 old-ef (1+ failures) meanq (1+ total-repeats)
+    (list -1 1 old-ef (inc failures) meanq (inc total-repeats)
           of-matrix)]     ; Not clear if OF matrix is supposed to be
                                       ; preserved
    ;; For a zero-based quality of 4 or 5, don't repeat
    ;; ((and (>= quality 4)
    ;;       (not org-learn-always-reschedule))
-   ;;  (list 0 (1+ n) ef failures meanq
-   ;;        (1+ total-repeats) of-matrix))     ; 0 interval = unschedule
+   ;;  (list 0 (inc n) ef failures meanq
+   ;;        (inc total-repeats) of-matrix))     ; 0 interval = unschedule
    [t
     (setv interval (inter-repetition-interval-sm5
                     last-interval n ef of-matrix))
     (if org-drill-add-random-noise-to-intervals-p
         (setv interval (* interval (org-drill-random-dispersal-factor))))
     (list interval
-          (1+ n)
+          (inc n)
           ef
           failures
           meanq
-          (1+ total-repeats)
+          (inc total-repeats)
           of-matrix)]))
 
 
@@ -267,7 +267,7 @@ See the documentation for `org-drill-get-item-data' for a description of these."
   (assert (or (none? meanq) (and (>= meanq 0) (<= meanq 5))))
   (setv next-interval nil)
   (setf meanq (if meanq
-                  (/ (+ quality (* meanq totaln 1.0)) (1+ totaln))
+                  (/ (+ quality (* meanq totaln 1.0)) (inc totaln))
                 quality))
   (cond
    [(<= quality org-drill-failure-quality)
