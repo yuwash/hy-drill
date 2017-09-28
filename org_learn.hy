@@ -33,65 +33,56 @@
 ;; To use, turn on state logging and schedule some piece of information you
 ;; want to read.  Then in the agenda buffer type
 
-(require 'org)
-(eval-when-compile
-  (require 'cl))
+;;   "If non-None, always reschedule items, even if retention was \"perfect\"."
+;;   :type 'boolean
+;;   :group 'org-learn
+(def org-learn-always-reschedule None)
 
-(defgroup org-learn nil
-  "Options concerning the learning code in Org-mode."
-  :tag "Org Learn"
-  :group 'org-progress)
+;;   "Controls the rate at which EF is increased or decreased.
+;; Must be a number between 0 and 1 (the greater it is the faster
+;; the changes of the OF matrix)."
+;;   :type 'float
+;;   :group 'org-learn
+(def org-learn-fraction 0.5)
 
-(defcustom org-learn-always-reschedule nil
-  "If non-nil, always reschedule items, even if retention was \"perfect\"."
-  :type 'boolean
-  :group 'org-learn)
-
-(defcustom org-learn-fraction 0.5
-  "Controls the rate at which EF is increased or decreased.
-Must be a number between 0 and 1 (the greater it is the faster
-the changes of the OF matrix)."
-  :type 'float
-  :group 'org-learn)
-
-(defun initial-optimal-factor (n ef)
+(defn initial-optimal-factor (n ef)
   (if (= 1 n)
       4
     ef))
 
-(defun get-optimal-factor (n ef of-matrix)
-  (let ((factors (assoc n of-matrix)))
+(defn get-optimal-factor (n ef of-matrix)
+  (let ((factors (get of-matrix n)))
     (or (and factors
-	     (let ((ef-of (assoc ef (cdr factors))))
+	     (let ((ef-of (get (cdr factors) ef)))
 	       (and ef-of (cdr ef-of))))
 	(initial-optimal-factor n ef))))
 
-(defun set-optimal-factor (n ef of-matrix of)
-  (let ((factors (assoc n of-matrix)))
+(defn set-optimal-factor (n ef of-matrix of)
+  (let ((factors (get of-matrix n)))
     (if factors
-	(let ((ef-of (assoc ef (cdr factors))))
+	(let ((ef-of (get (cdr factors) ef)))
 	  (if ef-of
 	      (setcdr ef-of of)
 	    (push (cons ef of) (cdr factors))))
       (push (cons n (list (cons ef of))) of-matrix)))
   of-matrix)
 
-(defun inter-repetition-interval (n ef &optional of-matrix)
+(defn inter-repetition-interval (n ef &optional of-matrix)
   (let ((of (get-optimal-factor n ef of-matrix)))
     (if (= 1 n)
 	of
       (* of (inter-repetition-interval (1- n) ef of-matrix)))))
 
-(defun modify-e-factor (ef quality)
+(defn modify-e-factor (ef quality)
   (if (< ef 1.3)
       1.3
     (+ ef (- 0.1 (* (- 5 quality) (+ 0.08 (* (- 5 quality) 0.02)))))))
 
-(defun modify-of (of q fraction)
+(defn modify-of (of q fraction)
   (let ((temp (* of (+ 0.72 (* q 0.07)))))
     (+ (* (- 1 fraction) of) (* fraction temp))))
 
-(defun calculate-new-optimal-factor (interval-used quality used-of
+(defn calculate-new-optimal-factor (interval-used quality used-of
 						   old-of fraction)
   "This implements the SM-5 learning algorithm in Lisp.
 INTERVAL-USED is the last interval used for the item in question.
@@ -134,13 +125,13 @@ OF matrix."
 	(setq new-of 1.2)
       new-of)))
 
-(defvar initial-repetition-state '(-1 1 2.5 nil))
+(def initial-repetition-state '(-1 1 2.5 None))
 
-(defun determine-next-interval (n ef quality of-matrix)
+(defn determine-next-interval (n ef quality of-matrix)
   (assert (> n 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (if (< quality 3)
-      (list (inter-repetition-interval n ef) (1+ n) ef nil)
+      (list (inter-repetition-interval n ef) (1+ n) ef None)
     (let ((next-ef (modify-e-factor ef quality)))
       (setq of-matrix
 	    (set-optimal-factor n next-ef of-matrix
@@ -154,7 +145,7 @@ OF matrix."
 	(list (inter-repetition-interval n ef of-matrix) (1+ n)
 	      ef of-matrix)))))
 
-(defun org-smart-reschedule (quality)
+(defn org-smart-reschedule (quality)
   (interactive "nHow well did you remember the information (on a scale of 0-5)? ")
   (let* ((learn-str (org-entry-get (point) "LEARN_DATA"))
 	 (learn-data (or (and learn-str
@@ -169,9 +160,7 @@ OF matrix."
     (org-entry-put (point) "LEARN_DATA" (prin1-to-string learn-data))
     (if (= 0 (nth 0 learn-data))
 	(org-schedule t)
-      (org-schedule nil (time-add (current-time)
+      (org-schedule None (time-add (current-time)
 				  (days-to-time (nth 0 learn-data)))))))
-
-(provide 'org-learn)
 
 ;;; org-learn.el ends here
