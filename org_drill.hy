@@ -373,8 +373,6 @@
     (setv savehist-additional-variables
       (cons 'savehist-additional-variables
             'org-drill-sm5-optimal-factor-matrix)))
-(unless savehist-mode
-  (savehist-mode 1))
 
 
 (defn org-drill--transfer-optimal-factor-matrix ()
