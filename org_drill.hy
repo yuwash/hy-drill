@@ -46,6 +46,7 @@
 
 (import math)
 (import copy)
+(import re)
 (import org_learn)
 
 
@@ -192,13 +193,13 @@
 (def org-drill-hint-separator "||")
 
 (defn org-drill--compute-cloze-regexp ()
-  (concat "\\("
-          (regexp-quote org-drill-left-cloze-delimiter)
-          "[[:cntrl:][:graph:][:space:]]+?\\)\\(\\|"
-          (regexp-quote org-drill-hint-separator)
-          ".+?\\)\\("
-          (regexp-quote org-drill-right-cloze-delimiter)
-          "\\)"))
+  (+ "\\("
+     (re.escape org-drill-left-cloze-delimiter)
+     "[[:cntrl:][:graph:][:space:]]+?\\)\\(\\|"
+     (re.escape org-drill-hint-separator)
+     ".+?\\)\\("
+     (re.escape org-drill-right-cloze-delimiter)
+     "\\)"))
 
 (defn org-drill--compute-cloze-keywords ()
   (list (list (org-drill--compute-cloze-regexp)
