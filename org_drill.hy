@@ -224,7 +224,7 @@ during a drill session."
 rest of the expression after the string is a `hint', to be displayed instead of
 the hidden cloze during a test.")
 
-(defun org-drill--compute-cloze-regexp ()
+(defn org-drill--compute-cloze-regexp ()
   (concat "\\("
           (regexp-quote org-drill-left-cloze-delimiter)
           "[[:cntrl:][:graph:][:space:]]+?\\)\\(\\|"
@@ -233,7 +233,7 @@ the hidden cloze during a test.")
           (regexp-quote org-drill-right-cloze-delimiter)
           "\\)"))
 
-(defun org-drill--compute-cloze-keywords ()
+(defn org-drill--compute-cloze-keywords ()
   (list (list (org-drill--compute-cloze-regexp)
               (copy-list '(1 'org-drill-visible-cloze-face nil))
               (copy-list '(2 'org-drill-visible-cloze-hint-face t))
@@ -406,7 +406,7 @@ pace of learning.")
   (savehist-mode 1))
 
 
-(defun org-drill--transfer-optimal-factor-matrix ()
+(defn org-drill--transfer-optimal-factor-matrix ()
   (if (and org-drill-optimal-factor-matrix
            (null org-drill-sm5-optimal-factor-matrix))
       (setq org-drill-sm5-optimal-factor-matrix
@@ -592,7 +592,7 @@ regardless of whether the test was successful.")
 ;;;; Utilities ================================================================
 
 
-(defun round-float (floatnum fix)
+(defn round-float (floatnum fix)
   "Round the floating point number FLOATNUM to FIX decimal places.
 Example: (round-float 3.56755765 3) -> 3.568"
   (let ((n (expt 10 fix)))
@@ -602,7 +602,7 @@ Example: (round-float 3.56755765 3) -> 3.568"
 ;;; SM2 Algorithm =============================================================
 
 
-(defun determine-next-interval-sm2 (last-interval n ef quality
+(defn determine-next-interval-sm2 (last-interval n ef quality
                                                   failures meanq total-repeats)
   "Arguments:
 - LAST-INTERVAL -- the number of days since the item was last reviewed.
@@ -658,12 +658,12 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 
 
 
-(defun initial-optimal-factor-sm5 (n ef)
+(defn initial-optimal-factor-sm5 (n ef)
   (if (= 1 n)
       org-drill-sm5-initial-interval
     ef))
 
-(defun get-optimal-factor-sm5 (n ef of-matrix)
+(defn get-optimal-factor-sm5 (n ef of-matrix)
   (let ((factors (assoc n of-matrix)))
     (or (and factors
              (let ((ef-of (assoc ef (cdr factors))))
@@ -671,7 +671,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
         (initial-optimal-factor-sm5 n ef))))
 
 
-(defun inter-repetition-interval-sm5 (last-interval n ef &optional of-matrix)
+(defn inter-repetition-interval-sm5 (last-interval n ef &optional of-matrix)
   (let ((of (get-optimal-factor-sm5 n ef (or of-matrix
                                              org-drill-sm5-optimal-factor-matrix))))
     (if (= 1 n)
@@ -679,7 +679,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
       (* of last-interval))))
 
 
-(defun determine-next-interval-sm5 (last-interval n ef quality
+(defn determine-next-interval-sm5 (last-interval n ef quality
                                                   failures meanq total-repeats
                                                   of-matrix &optional delta-days)
   (if (zerop n) (setq n 1))
@@ -742,7 +742,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 ;;; Simple8 Algorithm =========================================================
 
 
-(defun org-drill-simple8-first-interval (failures)
+(defn org-drill-simple8-first-interval (failures)
   "Arguments:
 - FAILURES: integer >= 0. The total number of times the item has
   been forgotten, ever.
@@ -752,7 +752,7 @@ forgotten on FAILURES occasions."
   (* 2.4849 (exp (* -0.057 failures))))
 
 
-(defun org-drill-simple8-interval-factor (ease repetition)
+(defn org-drill-simple8-interval-factor (ease repetition)
   "Arguments:
 - EASE: floating point number >= 1.2. Corresponds to `AF' in SM8 algorithm.
 - REPETITION: the number of times the item has been tested.
@@ -763,7 +763,7 @@ multiplied to give the next interval. Corresponds to `RF' or `OF'."
   (+ 1.2 (* (- ease 1.2) (expt org-drill-learn-fraction (log repetition 2)))))
 
 
-(defun org-drill-simple8-quality->ease (quality)
+(defn org-drill-simple8-quality->ease (quality)
   "Returns the ease (`AF' in the SM8 algorithm) which corresponds
 to a mean item quality of QUALITY."
   (+ (* 0.0542 (expt quality 4))
@@ -773,7 +773,7 @@ to a mean item quality of QUALITY."
      1.4515))
 
 
-(defun determine-next-interval-simple8 (last-interval repeats quality
+(defn determine-next-interval-simple8 (last-interval repeats quality
                                                       failures meanq totaln
                                                       &optional delta-days)
   "Arguments:
