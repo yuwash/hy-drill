@@ -64,7 +64,7 @@
      (if ef-of
          (setcdr ef-of of)
          (push (cons ef of) (cdr factors)))
-     (push (cons n (list (cons ef of))) of-matrix))
+     (push (cons n (list* (cons ef of))) of-matrix))
   of-matrix)
 
 (defn inter-repetition-interval (n ef &optional of-matrix)
@@ -131,7 +131,7 @@ OF matrix."
   (assert (> n 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (if (< quality 3)
-      (list (inter-repetition-interval n ef) (inc n) ef None)
+      (list* (inter-repetition-interval n ef) (inc n) ef None)
     (setv next-ef (modify-e-factor ef quality))
     (setv of-matrix
     (set-optimal-factor n next-ef of-matrix
@@ -141,16 +141,16 @@ OF matrix."
     ;; For a zero-based quality of 4 or 5, don't repeat
     (if (and (>= quality 4)
             (not org-learn-always-reschedule))
-    (list 0 (inc n) ef of-matrix)
-  (list (inter-repetition-interval n ef of-matrix) (inc n)
-        ef of-matrix))))
+    (list* 0 (inc n) ef of-matrix)
+  (list* (inter-repetition-interval n ef of-matrix) (inc n)
+         ef of-matrix))))
 
 (defn org-smart-reschedule (quality)
   (interactive "nHow well did you remember the information (on a scale of 0-5)? ")
   (setv learn-str (org-entry-get (point) "LEARN_DATA"))
   (setv	learn-data (or (and learn-str
                             (read learn-str))
-                       (copy-list initial-repetition-state)))
+                       (cut initial-repetition-state)))
   (setv	closed-dates None)
   (setv learn-data
   (determine-next-interval (nth 1 learn-data)

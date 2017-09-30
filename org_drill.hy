@@ -202,11 +202,11 @@
      "\\)"))
 
 (defn org-drill--compute-cloze-keywords ()
-  (list (list (org-drill--compute-cloze-regexp)
-              (copy-list '(1 'org-drill-visible-cloze-face None))
-              (copy-list '(2 'org-drill-visible-cloze-hint-face True))
-              (copy-list '(3 'org-drill-visible-cloze-face None))
-              )))
+  (list* (list* (org-drill--compute-cloze-regexp)
+                (cut '(1 'org-drill-visible-cloze-face None))
+                (cut '(2 'org-drill-visible-cloze-hint-face True))
+                (cut '(3 'org-drill-visible-cloze-face None))
+                )))
 
 (def org-drill-cloze-regexp
   (org-drill--compute-cloze-regexp))
