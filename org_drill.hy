@@ -186,10 +186,10 @@
   "]")
 
 
-(defvar org-drill-hint-separator "||"
-  "String which, if it occurs within a cloze expression, signifies that the
-rest of the expression after the string is a `hint', to be displayed instead of
-the hidden cloze during a test.")
+;;;   "String which, if it occurs within a cloze expression, signifies that the
+;;; rest of the expression after the string is a `hint', to be displayed instead of
+;;; the hidden cloze during a test."
+(def org-drill-hint-separator "||")
 
 (defn org-drill--compute-cloze-regexp ()
   (concat "\\("
@@ -207,29 +207,29 @@ the hidden cloze during a test.")
               (copy-list '(3 'org-drill-visible-cloze-face None))
               )))
 
-(defvar-local org-drill-cloze-regexp
+(def org-drill-cloze-regexp
   (org-drill--compute-cloze-regexp))
 
 
-(defvar-local org-drill-cloze-keywords
+(def org-drill-cloze-keywords
   (org-drill--compute-cloze-keywords))
 
 
 ;; Variables defining what keys can be pressed during drill sessions to quit the
 ;; session, edit the item, etc.
-(defvar org-drill--quit-key ?q
-  "If this character is pressed during a drill session, quit the session.")
-(defvar org-drill--edit-key ?e
-  "If this character is pressed during a drill session, suspend the session
-with the cursor at the current item..")
-(defvar org-drill--help-key ??
-  "If this character is pressed during a drill session, show help.")
-(defvar org-drill--skip-key ?s
-  "If this character is pressed during a drill session, skip to the next
-item.")
-(defvar org-drill--tags-key ?t
-  "If this character is pressed during a drill session, edit the tags for
-the current item.")
+;;;   "If this character is pressed during a drill session, quit the session."
+(def org-drill--quit-key ?q)
+;;;   "If this character is pressed during a drill session, suspend the session
+;;; with the cursor at the current item.."
+(def org-drill--edit-key ?e)
+;;;   "If this character is pressed during a drill session, show help."
+(def org-drill--help-key ??)
+;;;   "If this character is pressed during a drill session, skip to the next
+;;; item."
+(def org-drill--skip-key ?s)
+;;;   "If this character is pressed during a drill session, edit the tags for
+;;; the current item."
+(def org-drill--tags-key ?t)
 
 
 ;;;   "Alist associating card types with presentation functions. Each
@@ -356,15 +356,15 @@ the current item.")
   None)
 
 
-(defvar org-drill-sm5-optimal-factor-matrix
-  None
-  "DO NOT CHANGE THE VALUE OF THIS VARIABLE.
-
-Persistent matrix of optimal factors, used by the SuperMemo SM5
-algorithm. The matrix is saved at the end of each drill session.
-
-Over time, values in the matrix will adapt to the individual user's
-pace of learning.")
+;;;   "DO NOT CHANGE THE VALUE OF THIS VARIABLE.
+;;; 
+;;; Persistent matrix of optimal factors, used by the SuperMemo SM5
+;;; algorithm. The matrix is saved at the end of each drill session.
+;;; 
+;;; Over time, values in the matrix will adapt to the individual user's
+;;; pace of learning."
+(def org-drill-sm5-optimal-factor-matrix
+  None)
 
 
 (add-to-list 'savehist-additional-variables
@@ -492,22 +492,22 @@ pace of learning.")
   0.5)
 
 
-(defvar drill-answer None
-  "Global variable that can be bound to a correct answer when an
-item is being presented. If this variable is non-nil, the default
-presentation function will show its value instead of the default
-behaviour of revealing the contents of the drilled item.
+;;;   "Global variable that can be bound to a correct answer when an
+;;; item is being presented. If this variable is non-nil, the default
+;;; presentation function will show its value instead of the default
+;;; behaviour of revealing the contents of the drilled item.
+;;; 
+;;; This variable is useful for card types that compute their answers
+;;; -- for example, a card type that asks the student to translate a
+;;; random number to another language. "
+(def drill-answer None)
 
-This variable is useful for card types that compute their answers
--- for example, a card type that asks the student to translate a
-random number to another language. ")
 
-
-(defvar drill-typed-answer None
-  "Global variable that can be bound to the last answer typed by
-the user. Used by card types that ask the user to type in an
-answer, rather than just pressing spacebar to reveal the
-answer.")
+;;;   "Global variable that can be bound to the last answer typed by
+;;; the user. Used by card types that ask the user to type in an
+;;; answer, rather than just pressing spacebar to reveal the
+;;; answer."
+(def drill-typed-answer None)
 
 
 ;;;   "If non-nil, when concealing cloze deletions, force the length of
@@ -519,39 +519,39 @@ answer.")
   None)
 
 
-(defvar *org-drill-session-qualities* None)
-(defvar *org-drill-start-time* 0)
-(defvar *org-drill-new-entries* None)
-(defvar *org-drill-dormant-entry-count* 0)
-(defvar *org-drill-due-entry-count* 0)
-(defvar *org-drill-overdue-entry-count* 0)
-(defvar *org-drill-due-tomorrow-count* 0)
-(defvar *org-drill-overdue-entries* None
-  "List of markers for items that are considered 'overdue', based on
-the value of ORG-DRILL-OVERDUE-INTERVAL-FACTOR.")
-(defvar *org-drill-young-mature-entries* None
-  "List of markers for mature entries whose last inter-repetition
-interval was <= ORG-DRILL-DAYS-BEFORE-OLD days.")
-(defvar *org-drill-old-mature-entries* None
-  "List of markers for mature entries whose last inter-repetition
-interval was greater than ORG-DRILL-DAYS-BEFORE-OLD days.")
-(defvar *org-drill-failed-entries* None)
-(defvar *org-drill-again-entries* None)
-(defvar *org-drill-done-entries* None)
-(defvar *org-drill-current-item* None
-  "Set to the marker for the item currently being tested.")
-(defvar *org-drill-cram-mode* None
-  "Are we in 'cram mode', where all items are considered due
-for review unless they were already reviewed in the recent past?")
-(defvar org-drill-scheduling-properties
+(def *org-drill-session-qualities* None)
+(def *org-drill-start-time* 0)
+(def *org-drill-new-entries* None)
+(def *org-drill-dormant-entry-count* 0)
+(def *org-drill-due-entry-count* 0)
+(def *org-drill-overdue-entry-count* 0)
+(def *org-drill-due-tomorrow-count* 0)
+;;;   "List of markers for items that are considered 'overdue', based on
+;;; the value of ORG-DRILL-OVERDUE-INTERVAL-FACTOR."
+(def *org-drill-overdue-entries* None)
+;;;   "List of markers for mature entries whose last inter-repetition
+;;; interval was <= ORG-DRILL-DAYS-BEFORE-OLD days."
+(def *org-drill-young-mature-entries* None)
+;;;   "List of markers for mature entries whose last inter-repetition
+;;; interval was greater than ORG-DRILL-DAYS-BEFORE-OLD days."
+(def *org-drill-old-mature-entries* None)
+(def *org-drill-failed-entries* None)
+(def *org-drill-again-entries* None)
+(def *org-drill-done-entries* None)
+;;;   "Set to the marker for the item currently being tested."
+(def *org-drill-current-item* None)
+;;;   "Are we in 'cram mode', where all items are considered due
+;;; for review unless they were already reviewed in the recent past?"
+(def *org-drill-cram-mode* None)
+(def org-drill-scheduling-properties
   '("LEARN_DATA" "DRILL_LAST_INTERVAL" "DRILL_REPEATS_SINCE_FAIL"
     "DRILL_TOTAL_REPEATS" "DRILL_FAILURE_COUNT" "DRILL_AVERAGE_QUALITY"
     "DRILL_EASE" "DRILL_LAST_QUALITY" "DRILL_LAST_REVIEWED"))
-(defvar org-drill--lapse-very-overdue-entries-p None
-  "If non-nil, entries more than 90 days overdue are regarded as 'lapsed'.
-This means that when the item is eventually re-tested it will be
-treated as 'failed' (quality 2) for rescheduling purposes,
-regardless of whether the test was successful.")
+;;;   "If non-nil, entries more than 90 days overdue are regarded as 'lapsed'.
+;;; This means that when the item is eventually re-tested it will be
+;;; treated as 'failed' (quality 2) for rescheduling purposes,
+;;; regardless of whether the test was successful."
+(def org-drill--lapse-very-overdue-entries-p None)
 
 
 ;;;; Utilities ================================================================
