@@ -51,20 +51,20 @@
     ef))
 
 (defn get-optimal-factor (n ef of-matrix)
-  (let ((factors (get of-matrix n)))
-    (or (and factors
-	     (let ((ef-of (get (cdr factors) ef)))
-	       (and ef-of (cdr ef-of))))
-	(initial-optimal-factor n ef))))
+  (setv factors (get of-matrix n))
+  (or (and factors
+          (setv ef-of (get (cdr factors) ef))
+          (and ef-of (cdr ef-of)))
+     (initial-optimal-factor n ef)))
 
 (defn set-optimal-factor (n ef of-matrix of)
-  (let ((factors (get of-matrix n)))
-    (if factors
-	(let ((ef-of (get (cdr factors) ef)))
-	  (if ef-of
-	      (setcdr ef-of of)
-	    (push (cons ef of) (cdr factors))))
-      (push (cons n (list (cons ef of))) of-matrix)))
+  (setv factors (get of-matrix n))
+  (if factors
+     (setv ef-of (get (cdr factors) ef))
+     (if ef-of
+         (setcdr ef-of of)
+         (push (cons ef of) (cdr factors)))
+     (push (cons n (list (cons ef of))) of-matrix))
   of-matrix)
 
 (defn inter-repetition-interval (n ef &optional of-matrix)
@@ -79,8 +79,8 @@
     (+ ef (- 0.1 (* (- 5 quality) (+ 0.08 (* (- 5 quality) 0.02)))))))
 
 (defn modify-of (of q fraction)
-  (let ((temp (* of (+ 0.72 (* q 0.07)))))
-    (+ (* (- 1 fraction) of) (* fraction temp))))
+  (setv temp (* of (+ 0.72 (* q 0.07))))
+  (+ (* (- 1 fraction) of) (* fraction temp)))
 
 (defn calculate-new-optimal-factor (interval-used quality used-of
 						   old-of fraction)
@@ -132,35 +132,35 @@ OF matrix."
   (assert (and (>= quality 0) (<= quality 5)))
   (if (< quality 3)
       (list (inter-repetition-interval n ef) (inc n) ef None)
-    (let ((next-ef (modify-e-factor ef quality)))
-      (setv of-matrix
-	    (set-optimal-factor n next-ef of-matrix
-				(modify-of (get-optimal-factor n ef of-matrix)
-					   quality org-learn-fraction))
-	    ef next-ef)
-      ;; For a zero-based quality of 4 or 5, don't repeat
-      (if (and (>= quality 4)
-	       (not org-learn-always-reschedule))
-	  (list 0 (inc n) ef of-matrix)
-	(list (inter-repetition-interval n ef of-matrix) (inc n)
-	      ef of-matrix)))))
+    (setv next-ef (modify-e-factor ef quality))
+    (setv of-matrix
+    (set-optimal-factor n next-ef of-matrix
+                        (modify-of (get-optimal-factor n ef of-matrix)
+           quality org-learn-fraction))
+    ef next-ef)
+    ;; For a zero-based quality of 4 or 5, don't repeat
+    (if (and (>= quality 4)
+            (not org-learn-always-reschedule))
+    (list 0 (inc n) ef of-matrix)
+  (list (inter-repetition-interval n ef of-matrix) (inc n)
+        ef of-matrix))))
 
 (defn org-smart-reschedule (quality)
   (interactive "nHow well did you remember the information (on a scale of 0-5)? ")
-  (let* ((learn-str (org-entry-get (point) "LEARN_DATA"))
-	 (learn-data (or (and learn-str
-			      (read learn-str))
-			 (copy-list initial-repetition-state)))
-	 closed-dates)
-    (setv learn-data
-	  (determine-next-interval (nth 1 learn-data)
-				   (nth 2 learn-data)
-				   quality
-				   (nth 3 learn-data)))
-    (org-entry-put (point) "LEARN_DATA" (prin1-to-string learn-data))
-    (if (= 0 (nth 0 learn-data))
-	(org-schedule True)
-      (org-schedule None (time-add (current-time)
-				  (days-to-time (nth 0 learn-data)))))))
+  (setv learn-str (org-entry-get (point) "LEARN_DATA"))
+  (setv	learn-data (or (and learn-str
+                            (read learn-str))
+                       (copy-list initial-repetition-state)))
+  (setv	closed-dates None)
+  (setv learn-data
+  (determine-next-interval (nth 1 learn-data)
+                           (nth 2 learn-data)
+                           quality
+                           (nth 3 learn-data)))
+  (org-entry-put (point) "LEARN_DATA" (prin1-to-string learn-data))
+  (if (= 0 (nth 0 learn-data))
+     (org-schedule True)
+     (org-schedule None (time-add (current-time)
+                                (days-to-time (nth 0 learn-data))))))
 
 ;;; org-learn.el ends here
