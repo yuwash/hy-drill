@@ -50,6 +50,12 @@
 (import org_learn)
 
 
+;;; defining functions not available in Hy
+(defn incf (item)
+  (inc item)
+  item)
+
+
 ;;;   "Tag which topics must possess in order to be identified as review topics
 ;;; by `org-drill'."
 ;;;   :group 'org-drill
