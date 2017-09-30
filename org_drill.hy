@@ -632,18 +632,18 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
     (let* ((next-ef (modify-e-factor ef quality))
            (interval
             (cond
-             ((<= n 1) 1)
-             ((= n 2)
+             [(<= n 1) 1]
+             [(= n 2)
               (cond
-               (org-drill-add-random-noise-to-intervals-p
+               [org-drill-add-random-noise-to-intervals-p
                 (case quality
                   (5 6)
                   (4 4)
                   (3 3)
                   (2 1)
-                  (t -1)))
-               (t 6)))
-             (t (* last-interval next-ef)))))
+                  (t -1))]
+               [t 6])]
+             [t (* last-interval next-ef)])))
       (list (if org-drill-add-random-noise-to-intervals-p
                 (+ last-interval (* (- interval last-interval)
                                     (org-drill-random-dispersal-factor)))
@@ -716,16 +716,16 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 
     (cond
      ;; "Failed" -- reset repetitions to 0,
-     ((<= quality org-drill-failure-quality)
+     [(<= quality org-drill-failure-quality)
       (list -1 1 old-ef (1+ failures) meanq (1+ total-repeats)
-            of-matrix))     ; Not clear if OF matrix is supposed to be
+            of-matrix)]     ; Not clear if OF matrix is supposed to be
                                         ; preserved
      ;; For a zero-based quality of 4 or 5, don't repeat
      ;; ((and (>= quality 4)
      ;;       (not org-learn-always-reschedule))
      ;;  (list 0 (1+ n) ef failures meanq
      ;;        (1+ total-repeats) of-matrix))     ; 0 interval = unschedule
-     (t
+     [t
       (setq interval (inter-repetition-interval-sm5
                       last-interval n ef of-matrix))
       (if org-drill-add-random-noise-to-intervals-p
@@ -736,7 +736,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
             failures
             meanq
             (1+ total-repeats)
-            of-matrix)))))
+            of-matrix)])))
 
 
 ;;; Simple8 Algorithm =========================================================
@@ -801,16 +801,16 @@ See the documentation for `org-drill-get-item-data' for a description of these."
                     (/ (+ quality (* meanq totaln 1.0)) (1+ totaln))
                   quality))
     (cond
-     ((<= quality org-drill-failure-quality)
+     [(<= quality org-drill-failure-quality)
       (incf failures)
       (setf repeats 0
-            next-interval -1))
-     ((or (zerop repeats)
+            next-interval -1)]
+     [(or (zerop repeats)
           (zerop last-interval))
       (setf next-interval (org-drill-simple8-first-interval failures))
       (incf repeats)
-      (incf totaln))
-     (t
+      (incf totaln)]
+     [t
       (let* ((use-n
               (if (and
                    org-drill-adjust-intervals-for-early-and-late-repetitions-p
@@ -829,7 +829,7 @@ See the documentation for `org-drill-get-item-data' for a description of these."
                 next-int (* last-interval factor)))
         (setf next-interval next-int)
         (incf repeats)
-        (incf totaln))))
+        (incf totaln))])
     (list
      (if (and org-drill-add-random-noise-to-intervals-p
               (plusp next-interval))
