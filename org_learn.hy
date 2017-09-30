@@ -37,12 +37,12 @@
 (eval-when-compile
   (require 'cl))
 
-(defgroup org-learn nil
+(defgroup org-learn None
   "Options concerning the learning code in Org-mode."
   :tag "Org Learn"
   :group 'org-progress)
 
-(defcustom org-learn-always-reschedule nil
+(defcustom org-learn-always-reschedule None
   "If non-nil, always reschedule items, even if retention was \"perfect\"."
   :type 'boolean
   :group 'org-learn)
@@ -140,7 +140,7 @@ OF matrix."
   (assert (> n 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (if (< quality 3)
-      (list (inter-repetition-interval n ef) (inc n) ef nil)
+      (list (inter-repetition-interval n ef) (inc n) ef None)
     (let ((next-ef (modify-e-factor ef quality)))
       (setq of-matrix
 	    (set-optimal-factor n next-ef of-matrix
@@ -168,8 +168,8 @@ OF matrix."
 				   (nth 3 learn-data)))
     (org-entry-put (point) "LEARN_DATA" (prin1-to-string learn-data))
     (if (= 0 (nth 0 learn-data))
-	(org-schedule t)
-      (org-schedule nil (time-add (current-time)
+	(org-schedule True)
+      (org-schedule None (time-add (current-time)
 				  (days-to-time (nth 0 learn-data)))))))
 
 (provide 'org-learn)

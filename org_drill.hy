@@ -58,7 +58,7 @@
 ;;;   "Each drill session will present at most this many topics for review.
 ;;; Nil means unlimited."
 ;;;   :group 'org-drill
-;;;   :type '(choice integer (const nil))
+;;;   :type '(choice integer (const None))
 (def org-drill-maximum-items-per-session
   30)
 
@@ -66,7 +66,7 @@
 ;;;   "Maximum duration of a drill session, in minutes.
 ;;; Nil means unlimited."
 ;;;   :group 'org-drill
-;;;   :type '(choice integer (const nil))
+;;;   :type '(choice integer (const None))
 (def org-drill-maximum-duration
   20)
 
@@ -77,7 +77,7 @@
 ;;;   :group 'org-drill
 ;;;   :type 'boolean
 (def org-drill-item-count-includes-failed-items-p
-  nil)
+  None)
 
 ;;;   "If the quality of recall for an item is this number or lower,
 ;;; it is regarded as an unambiguous failure, and the repetition
@@ -108,38 +108,38 @@
 ;;;   "If an item is forgotten more than this many times, it is tagged
 ;;; as a 'leech' item."
 ;;;   :group 'org-drill
-;;;   :type '(choice integer (const nil))
+;;;   :type '(choice integer (const None))
 (def org-drill-leech-failure-threshold
   15)
 
 
 ;;;   "How should 'leech items' be handled during drill sessions?
 ;;; Possible values:
-;;; - nil :: Leech items are treated the same as normal items.
+;;; - None :: Leech items are treated the same as normal items.
 ;;; - skip :: Leech items are not included in drill sessions.
 ;;; - warn :: Leech items are still included in drill sessions,
 ;;;   but a warning message is printed when each leech item is
 ;;;   presented."
 ;;;   :group 'org-drill
-;;;   :type '(choice (const warn) (const skip) (const nil))
+;;;   :type '(choice (const warn) (const skip) (const None))
 (def org-drill-leech-method
   'skip)
 
 
 (defface org-drill-visible-cloze-face
-  '((t (:foreground "darkseagreen")))
+  '((True (:foreground "darkseagreen")))
   "The face used to hide the contents of cloze phrases."
   :group 'org-drill)
 
 
 (defface org-drill-visible-cloze-hint-face
-  '((t (:foreground "dark slate blue")))
+  '((True (:foreground "dark slate blue")))
   "The face used to hide the contents of cloze phrases."
   :group 'org-drill)
 
 
 (defface org-drill-hidden-cloze-face
-  '((t (:foreground "deep sky blue" :background "blue")))
+  '((True (:foreground "deep sky blue" :background "blue")))
   "The face used to hide the contents of cloze phrases."
   :group 'org-drill)
 
@@ -149,7 +149,7 @@
 ;;;   :group 'org-drill
 ;;;   :type 'boolean
 (def org-drill-use-visible-cloze-face-p
-  nil)
+  None)
 
 
 ;;;   "Conceal the contents of the main heading of each item during drill
@@ -158,7 +158,7 @@
 ;;;   :group 'org-drill
 ;;;   :type 'boolean
 (def org-drill-hide-item-headings-p
-  nil)
+  None)
 
 
 ;;;   "Foreground colour used to display the count of remaining new items
@@ -207,15 +207,15 @@
                              org-drill-left-cloze-delimiter
                              org-drill-right-cloze-delimiter)
                     face org-drill-hidden-cloze-face
-                    window t))
+                    window True))
 
 (setplist 'org-drill-hidden-text-overlay
-          '(invisible t))
+          '(invisible True))
 
 (setplist 'org-drill-replaced-text-overlay
           '(display "Replaced text"
                     face default
-                    window t))
+                    window True))
 
 (add-hook 'org-font-lock-set-keywords-hook 'org-drill-add-cloze-fontification)
 
@@ -236,9 +236,9 @@ the hidden cloze during a test.")
 
 (defn org-drill--compute-cloze-keywords ()
   (list (list (org-drill--compute-cloze-regexp)
-              (copy-list '(1 'org-drill-visible-cloze-face nil))
-              (copy-list '(2 'org-drill-visible-cloze-hint-face t))
-              (copy-list '(3 'org-drill-visible-cloze-face nil))
+              (copy-list '(1 'org-drill-visible-cloze-face None))
+              (copy-list '(2 'org-drill-visible-cloze-hint-face True))
+              (copy-list '(3 'org-drill-visible-cloze-face None))
               )))
 
 (defvar-local org-drill-cloze-regexp
@@ -287,14 +287,14 @@ the current item.")
 ;;; When non-nil, cards of this type will be presented during tests
 ;;; even if their bodies are empty."
 ;;;   :group 'org-drill
-;;;   :type '(alist :key-type (choice string (const nil))
+;;;   :type '(alist :key-type (choice string (const None))
 ;;;                 :value-type function)
 (def org-drill-card-type-alist
-  '((nil org-drill-present-simple-card)
+  '((None org-drill-present-simple-card)
     ("simple" org-drill-present-simple-card)
     ("simpletyped" org-drill-present-simple-card-with-typed-answer)
-    ("twosided" org-drill-present-two-sided-card nil t)
-    ("multisided" org-drill-present-multi-sided-card nil t)
+    ("twosided" org-drill-present-two-sided-card None True)
+    ("multisided" org-drill-present-multi-sided-card None True)
     ("hide1cloze" org-drill-present-multicloze-hide1)
     ("hide2cloze" org-drill-present-multicloze-hide2)
     ("show1cloze" org-drill-present-multicloze-show1)
@@ -351,9 +351,9 @@ the current item.")
 ;;;   "If non-nil, a string specifying a tags/property/TODO query. During
 ;;; drill sessions, only items that match this query will be considered."
 ;;;   :group 'org-drill
-;;;   :type '(choice (const nil) string)
+;;;   :type '(choice (const None) string)
 (def org-drill-match
-  nil)
+  None)
 
 
 ;;;   "If non-nil, prompt to save all modified buffers after a drill session
@@ -361,7 +361,7 @@ the current item.")
 ;;;   :group 'org-drill
 ;;;   :type 'boolean
 (def org-drill-save-buffers-after-drill-sessions-p
-  t)
+  True)
 
 
 ;;;   "Which SuperMemo spaced repetition algorithm to use for scheduling items.
@@ -387,11 +387,11 @@ the current item.")
 ;;;   :group 'org-drill
 ;;;   :type 'sexp
 (def org-drill-optimal-factor-matrix
-  nil)
+  None)
 
 
 (defvar org-drill-sm5-optimal-factor-matrix
-  nil
+  None
   "DO NOT CHANGE THE VALUE OF THIS VARIABLE.
 
 Persistent matrix of optimal factors, used by the SuperMemo SM5
@@ -409,7 +409,7 @@ pace of learning.")
 
 (defn org-drill--transfer-optimal-factor-matrix ()
   (if (and org-drill-optimal-factor-matrix
-           (null org-drill-sm5-optimal-factor-matrix))
+           (none? org-drill-sm5-optimal-factor-matrix))
       (setq org-drill-sm5-optimal-factor-matrix
             org-drill-optimal-factor-matrix)))
 
@@ -432,7 +432,7 @@ pace of learning.")
 ;;;   :group 'org-drill
 ;;;   :type 'boolean
 (def org-drill-add-random-noise-to-intervals-p
-  nil)
+  None)
 
 
 ;;;   "If true, when the student successfully reviews an item 1 or more days
@@ -449,7 +449,7 @@ pace of learning.")
 ;;;   :group 'org-drill
 ;;;   :type 'boolean
 (def org-drill-adjust-intervals-for-early-and-late-repetitions-p
-  nil)
+  None)
 
 
 ;;;   "For card types 'hide1_firstmore', 'show1_lastmore' and 'show1_firstless',
@@ -468,7 +468,7 @@ pace of learning.")
 ;;; If the value of this variable is NIL, then weighting is disabled, and
 ;;; all weighted card types are treated as their unweighted equivalents."
 ;;;   :group 'org-drill
-;;;   :type '(choice integer (const nil))
+;;;   :type '(choice integer (const None))
 (def org-drill-cloze-text-weight
   4)
 
@@ -528,7 +528,7 @@ pace of learning.")
   0.5)
 
 
-(defvar drill-answer nil
+(defvar drill-answer None
   "Global variable that can be bound to a correct answer when an
 item is being presented. If this variable is non-nil, the default
 presentation function will show its value instead of the default
@@ -539,7 +539,7 @@ This variable is useful for card types that compute their answers
 random number to another language. ")
 
 
-(defvar drill-typed-answer nil
+(defvar drill-typed-answer None
   "Global variable that can be bound to the last answer typed by
 the user. Used by card types that ask the user to type in an
 answer, rather than just pressing spacebar to reveal the
@@ -552,38 +552,38 @@ answer.")
 ;;;   :group 'org-drill
 ;;;   :type 'boolean
 (def org-drill-cloze-length-matches-hidden-text-p
-  nil)
+  None)
 
 
-(defvar *org-drill-session-qualities* nil)
+(defvar *org-drill-session-qualities* None)
 (defvar *org-drill-start-time* 0)
-(defvar *org-drill-new-entries* nil)
+(defvar *org-drill-new-entries* None)
 (defvar *org-drill-dormant-entry-count* 0)
 (defvar *org-drill-due-entry-count* 0)
 (defvar *org-drill-overdue-entry-count* 0)
 (defvar *org-drill-due-tomorrow-count* 0)
-(defvar *org-drill-overdue-entries* nil
+(defvar *org-drill-overdue-entries* None
   "List of markers for items that are considered 'overdue', based on
 the value of ORG-DRILL-OVERDUE-INTERVAL-FACTOR.")
-(defvar *org-drill-young-mature-entries* nil
+(defvar *org-drill-young-mature-entries* None
   "List of markers for mature entries whose last inter-repetition
 interval was <= ORG-DRILL-DAYS-BEFORE-OLD days.")
-(defvar *org-drill-old-mature-entries* nil
+(defvar *org-drill-old-mature-entries* None
   "List of markers for mature entries whose last inter-repetition
 interval was greater than ORG-DRILL-DAYS-BEFORE-OLD days.")
-(defvar *org-drill-failed-entries* nil)
-(defvar *org-drill-again-entries* nil)
-(defvar *org-drill-done-entries* nil)
-(defvar *org-drill-current-item* nil
+(defvar *org-drill-failed-entries* None)
+(defvar *org-drill-again-entries* None)
+(defvar *org-drill-done-entries* None)
+(defvar *org-drill-current-item* None
   "Set to the marker for the item currently being tested.")
-(defvar *org-drill-cram-mode* nil
+(defvar *org-drill-cram-mode* None
   "Are we in 'cram mode', where all items are considered due
 for review unless they were already reviewed in the recent past?")
 (defvar org-drill-scheduling-properties
   '("LEARN_DATA" "DRILL_LAST_INTERVAL" "DRILL_REPEATS_SINCE_FAIL"
     "DRILL_TOTAL_REPEATS" "DRILL_FAILURE_COUNT" "DRILL_AVERAGE_QUALITY"
     "DRILL_EASE" "DRILL_LAST_QUALITY" "DRILL_LAST_REVIEWED"))
-(defvar org-drill--lapse-very-overdue-entries-p nil
+(defvar org-drill--lapse-very-overdue-entries-p None
   "If non-nil, entries more than 90 days overdue are regarded as 'lapsed'.
 This means that when the item is eventually re-tested it will be
 treated as 'failed' (quality 2) for rescheduling purposes,
@@ -617,7 +617,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 - EF is modified based on the recall quality for the item.
 - OF-MATRIX is not modified."
   (if (zero? n) (setq n 1))
-  (if (null ef) (setq ef 2.5))
+  (if (none? ef) (setq ef 2.5))
   (setq meanq (if meanq
                   (/ (+ quality (* meanq total-repeats 1.0))
                      (inc total-repeats))
@@ -642,9 +642,9 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
            (4 4)
            (3 3)
            (2 1)
-           (t -1))]
-        [t 6])]
-      [t (* last-interval next-ef)]))
+           (True -1))]
+        [True 6])]
+      [True (* last-interval next-ef)]))
     (list (if org-drill-add-random-noise-to-intervals-p
               (+ last-interval (* (- interval last-interval)
                                   (org-drill-random-dispersal-factor)))
@@ -684,7 +684,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
                                                   failures meanq total-repeats
                                                   of-matrix &optional delta-days)
   (if (zero? n) (setq n 1))
-  (if (null ef) (setq ef 2.5))
+  (if (none? ef) (setq ef 2.5))
   (assert (> n 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (unless of-matrix
@@ -700,7 +700,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
   (setv old-ef ef)
   (setv new-of (modify-of (get-optimal-factor-sm5 n ef of-matrix)
                            quality org-drill-learn-fraction))
-  (setv interval nil)
+  (setv interval None)
   (when (and org-drill-adjust-intervals-for-early-and-late-repetitions-p
              delta-days (minusp delta-days))
     (setq new-of (org-drill-early-interval-factor
@@ -726,7 +726,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
    ;;       (not org-learn-always-reschedule))
    ;;  (list 0 (inc n) ef failures meanq
    ;;        (inc total-repeats) of-matrix))     ; 0 interval = unschedule
-   [t
+   [True
     (setq interval (inter-repetition-interval-sm5
                     last-interval n ef of-matrix))
     (if org-drill-add-random-noise-to-intervals-p
@@ -796,8 +796,8 @@ Returns the new item data, as a list of 6 values:
 See the documentation for `org-drill-get-item-data' for a description of these."
   (assert (>= repeats 0))
   (assert (and (>= quality 0) (<= quality 5)))
-  (assert (or (null meanq) (and (>= meanq 0) (<= meanq 5))))
-  (setv next-interval nil)
+  (assert (or (none? meanq) (and (>= meanq 0) (<= meanq 5))))
+  (setv next-interval None)
   (setf meanq (if meanq
                   (/ (+ quality (* meanq totaln 1.0)) (inc totaln))
                 quality))
@@ -811,7 +811,7 @@ See the documentation for `org-drill-get-item-data' for a description of these."
     (setf next-interval (org-drill-simple8-first-interval failures))
     (incf repeats)
     (incf totaln)]
-   [t
+   [True
     (setv use-n
             (if (and
                  org-drill-adjust-intervals-for-early-and-late-repetitions-p
