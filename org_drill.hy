@@ -764,17 +764,17 @@ See the documentation for `org-drill-get-item-data' for a description of these."
   (assert (and (>= quality 0) (<= quality 5)))
   (assert (or (none? meanq) (and (>= meanq 0) (<= meanq 5))))
   (setv next-interval None)
-  (setf meanq (if meanq
+  (setv meanq (if meanq
                   (/ (+ quality (* meanq totaln 1.0)) (inc totaln))
                 quality))
   (cond
    [(<= quality org-drill-failure-quality)
     (incf failures)
-    (setf repeats 0
+    (setv repeats 0
           next-interval -1)]
    [(or (zero? repeats)
         (zero? last-interval))
-    (setf next-interval (org-drill-simple8-first-interval failures))
+    (setv next-interval (org-drill-simple8-first-interval failures))
     (incf repeats)
     (incf totaln)]
    [True
@@ -791,10 +791,10 @@ See the documentation for `org-drill-get-item-data' for a description of these."
     (when (and org-drill-adjust-intervals-for-early-and-late-repetitions-p
                (numeric? delta-days) (minusp delta-days))
       ;; The item was reviewed earlier than scheduled.
-      (setf factor (org-drill-early-interval-factor
+      (setv factor (org-drill-early-interval-factor
                     factor next-int (abs delta-days))
             next-int (* last-interval factor)))
-    (setf next-interval next-int)
+    (setv next-interval next-int)
     (incf repeats)
     (incf totaln)])
   (list
