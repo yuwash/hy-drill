@@ -170,7 +170,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
   (setv old-ef ef)
   (setv new-of (modify-of (get-optimal-factor-sm5 n ef of-matrix)
                            quality org-drill-learn-fraction))
-  (setv interval nil)
+  (setv interval None)
   (when (and org-drill-adjust-intervals-for-early-and-late-repetitions-p
              delta-days (minusp delta-days))
     (setv new-of (org-drill-early-interval-factor
@@ -267,7 +267,7 @@ See the documentation for `org-drill-get-item-data' for a description of these."
   (assert (>= repeats 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (assert (or (none? meanq) (and (>= meanq 0) (<= meanq 5))))
-  (setv next-interval nil)
+  (setv next-interval None)
   (setf meanq (if meanq
                   (/ (+ quality (* meanq totaln 1.0)) (inc totaln))
                 quality))
