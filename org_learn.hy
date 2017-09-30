@@ -145,22 +145,4 @@ OF matrix."
   (list* (inter-repetition-interval n ef of-matrix) (inc n)
          ef of-matrix))))
 
-(defn org-smart-reschedule (quality)
-  (interactive "nHow well did you remember the information (on a scale of 0-5)? ")
-  (setv learn-str (org-entry-get (point) "LEARN_DATA"))
-  (setv	learn-data (or (and learn-str
-                            (read learn-str))
-                       (cut initial-repetition-state)))
-  (setv	closed-dates None)
-  (setv learn-data
-  (determine-next-interval (nth 1 learn-data)
-                           (nth 2 learn-data)
-                           quality
-                           (nth 3 learn-data)))
-  (org-entry-put (point) "LEARN_DATA" (prin1-to-string learn-data))
-  (if (= 0 (nth 0 learn-data))
-     (org-schedule True)
-     (org-schedule None (time-add (current-time)
-                                (days-to-time (nth 0 learn-data))))))
-
 ;;; org-learn.el ends here
