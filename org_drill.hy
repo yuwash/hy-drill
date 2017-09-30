@@ -384,7 +384,7 @@
 (defn org-drill--transfer-optimal-factor-matrix ()
   (if (and org-drill-optimal-factor-matrix
            (none? org-drill-sm5-optimal-factor-matrix))
-      (setq org-drill-sm5-optimal-factor-matrix
+      (setv org-drill-sm5-optimal-factor-matrix
             org-drill-optimal-factor-matrix)))
 
 
@@ -588,9 +588,9 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 - REPEATS is incremented by 1.
 - EF is modified based on the recall quality for the item.
 - OF-MATRIX is not modified."
-  (if (zero? n) (setq n 1))
-  (if (none? ef) (setq ef 2.5))
-  (setq meanq (if meanq
+  (if (zero? n) (setv n 1))
+  (if (none? ef) (setv ef 2.5))
+  (setv meanq (if meanq
                   (/ (+ quality (* meanq total-repeats 1.0))
                      (inc total-repeats))
                 quality))
@@ -655,15 +655,15 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
 (defn determine-next-interval-sm5 (last-interval n ef quality
                                                   failures meanq total-repeats
                                                   of-matrix &optional delta-days)
-  (if (zero? n) (setq n 1))
-  (if (none? ef) (setq ef 2.5))
+  (if (zero? n) (setv n 1))
+  (if (none? ef) (setv ef 2.5))
   (assert (> n 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (unless of-matrix
     (setv of-matrix org-drill-sm5-optimal-factor-matrix))
   (setv of-matrix (copy.deepcopy of-matrix))
 
-  (setq meanq (if meanq
+  (setv meanq (if meanq
                   (/ (+ quality (* meanq total-repeats 1.0))
                      (inc total-repeats))
                 quality))
@@ -675,7 +675,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
   (setv interval None)
   (when (and org-drill-adjust-intervals-for-early-and-late-repetitions-p
              delta-days (minusp delta-days))
-    (setq new-of (org-drill-early-interval-factor
+    (setv new-of (org-drill-early-interval-factor
                   (get-optimal-factor-sm5 n ef of-matrix)
                   (inter-repetition-interval-sm5
                    last-interval n ef of-matrix)
@@ -685,7 +685,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
         (org_learn.set-optimal-factor n next-ef of-matrix
                             (round-float new-of 3))) ; round OF to 3 d.p.
 
-  (setq ef next-ef)
+  (setv ef next-ef)
 
   (cond
    ;; "Failed" -- reset repetitions to 0,
@@ -699,10 +699,10 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
    ;;  (list 0 (inc n) ef failures meanq
    ;;        (inc total-repeats) of-matrix))     ; 0 interval = unschedule
    [True
-    (setq interval (inter-repetition-interval-sm5
+    (setv interval (inter-repetition-interval-sm5
                     last-interval n ef of-matrix))
     (if org-drill-add-random-noise-to-intervals-p
-        (setq interval (* interval (org-drill-random-dispersal-factor))))
+        (setv interval (* interval (org-drill-random-dispersal-factor))))
     (list interval
           (inc n)
           ef
