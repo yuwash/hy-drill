@@ -76,11 +76,11 @@ the changes of the OF matrix)."
       (push (cons n (list (cons ef of))) of-matrix)))
   of-matrix)
 
-(defun inter-repetition-interval (n ef &optional of-matrix)
-  (let ((of (get-optimal-factor n ef of-matrix)))
-    (if (= 1 n)
-	of
-      (* of (inter-repetition-interval (1- n) ef of-matrix)))))
+(defn inter-repetition-interval (n ef &optional of-matrix)
+  (setv of (get-optimal-factor n ef of-matrix))
+  (if (= 1 n)
+     of
+    (* of (inter-repetition-interval (dec n) ef of-matrix))))
 
 (defun modify-e-factor (ef quality)
   (if (< ef 1.3)
@@ -106,41 +106,41 @@ of the OF matrix).
 
 Returns the newly calculated value of the considered entry of the
 OF matrix."
-  (let (;; the value proposed for the modifier in case of q=5
-	(mod5 (/ (1+ interval-used) interval-used))
-	;; the value proposed for the modifier in case of q=2
-	(mod2 (/ (1- interval-used) interval-used))
-	;; the number determining how many times the OF value will
-	;; increase or decrease
-	modifier)
-    (if (< mod5 1.05)
-	(setq mod5 1.05))
-    (if (< mod2 0.75)
-	(setq mod5 0.75))
-    (if (> quality 4)
-	(setq modifier (1+ (* (- mod5 1) (- quality 4))))
-      (setq modifier (- 1 (* (/ (- 1 mod2) 2) (- 4 quality)))))
-    (if (< modifier 0.05)
-	(setq modifier 0.05))
-    (setq new-of (* used-of modifier))
-    (if (> quality 4)
-	(if (< new-of old-of)
-	    (setq new-of old-of)))
-    (if (< quality 4)
-	(if (> new-of old-of)
-	    (setq new-of old-of)))
-    (setq new-of (+ (* new-of fraction) (* old-of (- 1 fraction))))
-    (if (< new-of 1.2)
-	(setq new-of 1.2)
-      new-of)))
+  ;; the value proposed for the modifier in case of q=5
+  (setv mod5 (/ (inc interval-used) interval-used))
+  ;; the value proposed for the modifier in case of q=2
+  (setv mod2 (/ (dec interval-used) interval-used))
+  ;; the number determining how many times the OF value will
+  ;; increase or decrease
+  (setv modifier None)
+  (if (< mod5 1.05)
+     (setv mod5 1.05))
+  (if (< mod2 0.75)
+     (setv mod5 0.75))
+  (if (> quality 4)
+     (setv modifier (inc (* (- mod5 1) (- quality 4))))
+    (setv modifier (- 1 (* (/ (- 1 mod2) 2) (- 4 quality)))))
+  (if (< modifier 0.05)
+     (setv modifier 0.05))
+  (setv new-of (* used-of modifier))
+  (if (> quality 4)
+    (if (< new-of old-of)
+        (setv new-of old-of)))
+  (if (< quality 4)
+    (if (> new-of old-of)
+        (setv new-of old-of)))
+  (setv new-of (+ (* new-of fraction) (* old-of (- 1 fraction))))
+  (if (< new-of 1.2)
+     (setv new-of 1.2)
+    new-of))
 
-(defvar initial-repetition-state '(-1 1 2.5 nil))
+(def initial-repetition-state '(-1 1 2.5 None))
 
-(defun determine-next-interval (n ef quality of-matrix)
+(defn determine-next-interval (n ef quality of-matrix)
   (assert (> n 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (if (< quality 3)
-      (list (inter-repetition-interval n ef) (1+ n) ef nil)
+      (list (inter-repetition-interval n ef) (inc n) ef nil)
     (let ((next-ef (modify-e-factor ef quality)))
       (setq of-matrix
 	    (set-optimal-factor n next-ef of-matrix
@@ -150,8 +150,8 @@ OF matrix."
       ;; For a zero-based quality of 4 or 5, don't repeat
       (if (and (>= quality 4)
 	       (not org-learn-always-reschedule))
-	  (list 0 (1+ n) ef of-matrix)
-	(list (inter-repetition-interval n ef of-matrix) (1+ n)
+	  (list 0 (inc n) ef of-matrix)
+	(list (inter-repetition-interval n ef of-matrix) (inc n)
 	      ef of-matrix)))))
 
 (defun org-smart-reschedule (quality)
