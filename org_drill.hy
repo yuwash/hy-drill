@@ -219,18 +219,18 @@
 ;; Variables defining what keys can be pressed during drill sessions to quit the
 ;; session, edit the item, etc.
 ;;;   "If this character is pressed during a drill session, quit the session."
-(def org-drill--quit-key ?q)
+(def org-drill--quit-key (ord "q"))
 ;;;   "If this character is pressed during a drill session, suspend the session
 ;;; with the cursor at the current item.."
-(def org-drill--edit-key ?e)
+(def org-drill--edit-key (ord "e"))
 ;;;   "If this character is pressed during a drill session, show help."
-(def org-drill--help-key ??)
+(def org-drill--help-key (ord "?"))
 ;;;   "If this character is pressed during a drill session, skip to the next
 ;;; item."
-(def org-drill--skip-key ?s)
+(def org-drill--skip-key (ord "s"))
 ;;;   "If this character is pressed during a drill session, edit the tags for
 ;;; the current item."
-(def org-drill--tags-key ?t)
+(def org-drill--tags-key (ord "t"))
 
 
 ;;;   "Alist associating card types with presentation functions. Each
