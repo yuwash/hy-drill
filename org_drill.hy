@@ -128,24 +128,6 @@
   'skip)
 
 
-(defface org-drill-visible-cloze-face
-  '((True (:foreground "darkseagreen")))
-  "The face used to hide the contents of cloze phrases."
-  :group 'org-drill)
-
-
-(defface org-drill-visible-cloze-hint-face
-  '((True (:foreground "dark slate blue")))
-  "The face used to hide the contents of cloze phrases."
-  :group 'org-drill)
-
-
-(defface org-drill-hidden-cloze-face
-  '((True (:foreground "deep sky blue" :background "blue")))
-  "The face used to hide the contents of cloze phrases."
-  :group 'org-drill)
-
-
 ;;;   "Use a special face to highlight cloze-deleted text in org mode
 ;;; buffers?"
 ;;;   :group 'org-drill
@@ -202,24 +184,6 @@
 ;;;   :type 'string
 (def org-drill-right-cloze-delimiter
   "]")
-
-
-(setplist 'org-drill-cloze-overlay-defaults
-          `(display ,(format "%s...%s"
-                             org-drill-left-cloze-delimiter
-                             org-drill-right-cloze-delimiter)
-                    face org-drill-hidden-cloze-face
-                    window True))
-
-(setplist 'org-drill-hidden-text-overlay
-          '(invisible True))
-
-(setplist 'org-drill-replaced-text-overlay
-          '(display "Replaced text"
-                    face default
-                    window True))
-
-(add-hook 'org-font-lock-set-keywords-hook 'org-drill-add-cloze-fontification)
 
 
 (defvar org-drill-hint-separator "||"
@@ -414,8 +378,6 @@ pace of learning.")
            (none? org-drill-sm5-optimal-factor-matrix))
       (setq org-drill-sm5-optimal-factor-matrix
             org-drill-optimal-factor-matrix)))
-
-(add-hook 'after-init-hook 'org-drill--transfer-optimal-factor-matrix)
 
 
 ;;;   In the SM5 algorithm, the initial interval after the first
