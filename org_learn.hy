@@ -51,20 +51,24 @@
     ef))
 
 (defn get-optimal-factor (n ef of-matrix)
-  (setv factors (get of-matrix n))
-  (or (and factors
-          (setv ef-of (get (cdr factors) ef))
-          (and ef-of (cdr ef-of)))
-     (initial-optimal-factor n ef)))
+  (do
+    (setv factors (get of-matrix n))
+    (or (and factors
+            (do
+              (setv ef-of (get (cdr factors) ef))
+              (and ef-of (cdr ef-of))))
+       (initial-optimal-factor n ef))))
 
 (defn set-optimal-factor (n ef of-matrix of)
-  (setv factors (get of-matrix n))
-  (if factors
-     (setv ef-of (get (cdr factors) ef))
-     (if ef-of
-         (setcdr ef-of of)
-         (push (cons ef of) (cdr factors)))
-     (push (cons n (list* (cons ef of))) of-matrix))
+  (do
+    (setv factors (get of-matrix n))
+    (if factors
+       (do
+         (setv ef-of (get (cdr factors) ef))
+         (if ef-of
+             (setcdr ef-of of)
+             (push (cons ef of) (cdr factors))))
+       (push (cons n (list* (cons ef of))) of-matrix)))
   of-matrix)
 
 (defn inter-repetition-interval (n ef &optional of-matrix)
@@ -132,17 +136,18 @@ OF matrix."
   (assert (and (>= quality 0) (<= quality 5)))
   (if (< quality 3)
       (list* (inter-repetition-interval n ef) (inc n) ef None)
-    (setv next-ef (modify-e-factor ef quality))
-    (setv of-matrix
-    (set-optimal-factor n next-ef of-matrix
-                        (modify-of (get-optimal-factor n ef of-matrix)
-           quality org-learn-fraction))
-    ef next-ef)
-    ;; For a zero-based quality of 4 or 5, don't repeat
-    (if (and (>= quality 4)
-            (not org-learn-always-reschedule))
-    (list* 0 (inc n) ef of-matrix)
-  (list* (inter-repetition-interval n ef of-matrix) (inc n)
-         ef of-matrix))))
+    (do
+      (setv next-ef (modify-e-factor ef quality))
+      (setv of-matrix
+      (set-optimal-factor n next-ef of-matrix
+                          (modify-of (get-optimal-factor n ef of-matrix)
+             quality org-learn-fraction))
+      ef next-ef)
+      ;; For a zero-based quality of 4 or 5, don't repeat
+      (if (and (>= quality 4)
+              (not org-learn-always-reschedule))
+         (list* 0 (inc n) ef of-matrix)
+       (list* (inter-repetition-interval n ef of-matrix) (inc n)
+              ef of-matrix)))))
 
 ;;; org-learn.el ends here

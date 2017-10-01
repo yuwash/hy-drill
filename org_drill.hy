@@ -602,29 +602,30 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
       (list -1 1 ef (inc failures) meanq (inc total-repeats)
             org-drill-sm5-optimal-factor-matrix)
     ;; else:
-    (setv next-ef (org_learn.modify-e-factor ef quality))
-    (setv interval
-     (cond
-      [(<= n 1) 1]
-      [(= n 2)
-       (cond
-        [org-drill-add-random-noise-to-intervals-p
-         (case quality
-           (5 6)
-           (4 4)
-           (3 3)
-           (2 1)
-           (True -1))]
-        [True 6])]
-      [True (* last-interval next-ef)]))
-    (list (if org-drill-add-random-noise-to-intervals-p
-              (+ last-interval (* (- interval last-interval)
-                                  (org-drill-random-dispersal-factor)))
-            interval)
-          (inc n)
-          next-ef
-          failures meanq (inc total-repeats)
-          org-drill-sm5-optimal-factor-matrix)))
+    (do
+           (setv next-ef (org_learn.modify-e-factor ef quality))
+           (setv interval
+            (cond
+             [(<= n 1) 1]
+             [(= n 2)
+              (cond
+               [org-drill-add-random-noise-to-intervals-p
+                (case quality
+                  (5 6)
+                  (4 4)
+                  (3 3)
+                  (2 1)
+                  (True -1))]
+               [True 6])]
+             [True (* last-interval next-ef)]))
+           (list (if org-drill-add-random-noise-to-intervals-p
+                     (+ last-interval (* (- interval last-interval)
+                                         (org-drill-random-dispersal-factor)))
+                   interval)
+                 (inc n)
+                 next-ef
+                 failures meanq (inc total-repeats)
+                 org-drill-sm5-optimal-factor-matrix))))
 
 
 ;;; SM5 Algorithm =============================================================
@@ -637,19 +638,20 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
     ef))
 
 (defn get-optimal-factor-sm5 (n ef of-matrix)
-  (setv factors (get of-matrix n))
-  (or (and factors
-           (setv ef-of (get (drop 1 factors) ef))
-           (and ef-of (drop 1 ef-of)))
-      (initial-optimal-factor-sm5 n ef)))
+  (do (setv factors (get of-matrix n))
+    (or (and factors
+             (do (setv ef-of (get (drop 1 factors) ef))
+               (and ef-of (drop 1 ef-of))))
+        (initial-optimal-factor-sm5 n ef))))
 
 
 (defn inter-repetition-interval-sm5 (last-interval n ef &optional of-matrix)
-  (setv of (get-optimal-factor-sm5 n ef (or of-matrix
-                                             org-drill-sm5-optimal-factor-matrix)))
-  (if (= 1 n)
-      of
-    (* of last-interval)))
+  (do
+    (setv of (get-optimal-factor-sm5 n ef (or of-matrix
+                                              org-drill-sm5-optimal-factor-matrix)))
+    (if (= 1 n)
+        of
+      (* of last-interval))))
 
 
 (defn determine-next-interval-sm5 (last-interval n ef quality
@@ -668,48 +670,49 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
                      (inc total-repeats))
                 quality))
 
-  (setv next-ef (org_learn.modify-e-factor ef quality))
-  (setv old-ef ef)
-  (setv new-of (org_learn.modify-of (get-optimal-factor-sm5 n ef of-matrix)
-				    quality org-drill-learn-fraction))
-  (setv interval None)
-  (when (and org-drill-adjust-intervals-for-early-and-late-repetitions-p
-             delta-days (minusp delta-days))
-    (setv new-of (org-drill-early-interval-factor
-                  (get-optimal-factor-sm5 n ef of-matrix)
-                  (inter-repetition-interval-sm5
-                   last-interval n ef of-matrix)
-                  delta-days)))
+  (do
+    (setv next-ef (org_learn.modify-e-factor ef quality))
+    (setv old-ef ef)
+    (setv new-of (org_learn.modify-of (get-optimal-factor-sm5 n ef of-matrix)
+                                      quality org-drill-learn-fraction))
+    (setv interval None)
+    (when (and org-drill-adjust-intervals-for-early-and-late-repetitions-p
+               delta-days (minusp delta-days))
+      (setv new-of (org-drill-early-interval-factor
+                    (get-optimal-factor-sm5 n ef of-matrix)
+                    (inter-repetition-interval-sm5
+                     last-interval n ef of-matrix)
+                    delta-days)))
 
-  (setv of-matrix
-        (org_learn.set-optimal-factor n next-ef of-matrix
-                            (round-float new-of 3))) ; round OF to 3 d.p.
+    (setv of-matrix
+          (org_learn.set-optimal-factor n next-ef of-matrix
+                              (round-float new-of 3))) ; round OF to 3 d.p.
 
-  (setv ef next-ef)
+    (setv ef next-ef)
 
-  (cond
-   ;; "Failed" -- reset repetitions to 0,
-   [(<= quality org-drill-failure-quality)
-    (list -1 1 old-ef (inc failures) meanq (inc total-repeats)
-          of-matrix)]     ; Not clear if OF matrix is supposed to be
-                                      ; preserved
-   ;; For a zero-based quality of 4 or 5, don't repeat
-   ;; ((and (>= quality 4)
-   ;;       (not org-learn-always-reschedule))
-   ;;  (list 0 (inc n) ef failures meanq
-   ;;        (inc total-repeats) of-matrix))     ; 0 interval = unschedule
-   [True
-    (setv interval (inter-repetition-interval-sm5
-                    last-interval n ef of-matrix))
-    (if org-drill-add-random-noise-to-intervals-p
-        (setv interval (* interval (org-drill-random-dispersal-factor))))
-    (list interval
-          (inc n)
-          ef
-          failures
-          meanq
-          (inc total-repeats)
-          of-matrix)]))
+    (cond
+     ;; "Failed" -- reset repetitions to 0,
+     [(<= quality org-drill-failure-quality)
+      (list -1 1 old-ef (inc failures) meanq (inc total-repeats)
+            of-matrix)]     ; Not clear if OF matrix is supposed to be
+                                        ; preserved
+     ;; For a zero-based quality of 4 or 5, don't repeat
+     ;; ((and (>= quality 4)
+     ;;       (not org-learn-always-reschedule))
+     ;;  (list 0 (inc n) ef failures meanq
+     ;;        (inc total-repeats) of-matrix))     ; 0 interval = unschedule
+     [True
+      (setv interval (inter-repetition-interval-sm5
+                      last-interval n ef of-matrix))
+      (if org-drill-add-random-noise-to-intervals-p
+          (setv interval (* interval (org-drill-random-dispersal-factor))))
+      (list interval
+            (inc n)
+            ef
+            failures
+            meanq
+            (inc total-repeats)
+            of-matrix)])))
 
 
 ;;; Simple8 Algorithm =========================================================
@@ -769,48 +772,50 @@ See the documentation for `org-drill-get-item-data' for a description of these."
   (assert (>= repeats 0))
   (assert (and (>= quality 0) (<= quality 5)))
   (assert (or (none? meanq) (and (>= meanq 0) (<= meanq 5))))
-  (setv next-interval None)
-  (setv meanq (if meanq
-                  (/ (+ quality (* meanq totaln 1.0)) (inc totaln))
-                quality))
-  (cond
-   [(<= quality org-drill-failure-quality)
-    (incf failures)
-    (setv repeats 0
-          next-interval -1)]
-   [(or (zero? repeats)
-        (zero? last-interval))
-    (setv next-interval (org-drill-simple8-first-interval failures))
-    (incf repeats)
-    (incf totaln)]
-   [True
-    (setv use-n
-            (if (and
-                 org-drill-adjust-intervals-for-early-and-late-repetitions-p
-                 (numeric? delta-days) (pos? delta-days)
-                 (pos? last-interval))
-                (+ repeats (min 1 (/ delta-days last-interval 1.0)))
-              repeats))
-    (setv factor (org-drill-simple8-interval-factor
-             (org-drill-simple8-quality->ease meanq) use-n))
-    (setv next-int (* last-interval factor))
-    (when (and org-drill-adjust-intervals-for-early-and-late-repetitions-p
-               (numeric? delta-days) (minusp delta-days))
-      ;; The item was reviewed earlier than scheduled.
-      (setv factor (org-drill-early-interval-factor
-                    factor next-int (abs delta-days))
-            next-int (* last-interval factor)))
-    (setv next-interval next-int)
-    (incf repeats)
-    (incf totaln)])
-  (list
-   (if (and org-drill-add-random-noise-to-intervals-p
-            (pos? next-interval))
-       (* next-interval (org-drill-random-dispersal-factor))
-     next-interval)
-   repeats
-   (org-drill-simple8-quality->ease meanq)
-   failures
-   meanq
-   totaln
-   ))
+  (do
+    (setv next-interval None)
+    (setv meanq (if meanq
+                    (/ (+ quality (* meanq totaln 1.0)) (inc totaln))
+                  quality))
+    (cond
+     [(<= quality org-drill-failure-quality)
+      (incf failures)
+      (setv repeats 0
+            next-interval -1)]
+     [(or (zero? repeats)
+          (zero? last-interval))
+      (setv next-interval (org-drill-simple8-first-interval failures))
+      (incf repeats)
+      (incf totaln)]
+     [True
+      (do
+        (setv use-n
+                (if (and
+                     org-drill-adjust-intervals-for-early-and-late-repetitions-p
+                     (numeric? delta-days) (pos? delta-days)
+                     (pos? last-interval))
+                    (+ repeats (min 1 (/ delta-days last-interval 1.0)))
+                  repeats))
+        (setv factor (org-drill-simple8-interval-factor
+                 (org-drill-simple8-quality->ease meanq) use-n))
+        (setv next-int (* last-interval factor))
+        (when (and org-drill-adjust-intervals-for-early-and-late-repetitions-p
+                   (numeric? delta-days) (minusp delta-days))
+          ;; The item was reviewed earlier than scheduled.
+          (setv factor (org-drill-early-interval-factor
+                        factor next-int (abs delta-days))
+                next-int (* last-interval factor)))
+        (setv next-interval next-int)
+        (incf repeats)
+        (incf totaln))])
+    (list
+     (if (and org-drill-add-random-noise-to-intervals-p
+              (pos? next-interval))
+         (* next-interval (org-drill-random-dispersal-factor))
+       next-interval)
+     repeats
+     (org-drill-simple8-quality->ease meanq)
+     failures
+     meanq
+     totaln
+     )))
