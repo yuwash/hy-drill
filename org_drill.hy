@@ -599,7 +599,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
   (if (<= quality org-drill-failure-quality)
       ;; When an item is failed, its interval is reset to 0,
       ;; but its EF is unchanged
-      (list -1 1 ef (inc failures) meanq (inc total-repeats)
+      (list* -1 1 ef (inc failures) meanq (inc total-repeats)
             org-drill-sm5-optimal-factor-matrix)
     ;; else:
     (do
@@ -618,7 +618,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
                   (True -1))]
                [True 6])]
              [True (* last-interval next-ef)]))
-           (list (if org-drill-add-random-noise-to-intervals-p
+           (list* (if org-drill-add-random-noise-to-intervals-p
                      (+ last-interval (* (- interval last-interval)
                                          (org-drill-random-dispersal-factor)))
                    interval)
@@ -693,20 +693,20 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
     (cond
      ;; "Failed" -- reset repetitions to 0,
      [(<= quality org-drill-failure-quality)
-      (list -1 1 old-ef (inc failures) meanq (inc total-repeats)
+      (list* -1 1 old-ef (inc failures) meanq (inc total-repeats)
             of-matrix)]     ; Not clear if OF matrix is supposed to be
                                         ; preserved
      ;; For a zero-based quality of 4 or 5, don't repeat
      ;; ((and (>= quality 4)
      ;;       (not org-learn-always-reschedule))
-     ;;  (list 0 (inc n) ef failures meanq
+     ;;  (list* 0 (inc n) ef failures meanq
      ;;        (inc total-repeats) of-matrix))     ; 0 interval = unschedule
      [True
       (setv interval (inter-repetition-interval-sm5
                       last-interval n ef of-matrix))
       (if org-drill-add-random-noise-to-intervals-p
           (setv interval (* interval (org-drill-random-dispersal-factor))))
-      (list interval
+      (list* interval
             (inc n)
             ef
             failures
@@ -808,7 +808,7 @@ See the documentation for `org-drill-get-item-data' for a description of these."
         (setv next-interval next-int)
         (incf repeats)
         (incf totaln))])
-    (list
+    (list*
      (if (and org-drill-add-random-noise-to-intervals-p
               (pos? next-interval))
          (* next-interval (org-drill-random-dispersal-factor))
