@@ -818,4 +818,5 @@ See the documentation for `org-drill-get-item-data' for a description of these."
      failures
      meanq
      totaln
+     None
      )))
