@@ -33,6 +33,12 @@
 ;; To use, turn on state logging and schedule some piece of information you
 ;; want to read.  Then in the agenda buffer type
 
+
+;;; defining functions not available in Hy
+(defn push (element listname)
+  (setv listname (cons element listname)))
+
+
 ;;   "If non-None, always reschedule items, even if retention was \"perfect\"."
 ;;   :type 'boolean
 ;;   :group 'org-learn
