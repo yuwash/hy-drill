@@ -96,7 +96,7 @@ def main():
     boringDK = deque(maxlen=2)  # will be memorized
     for i in range(50):
         if len(recentDK) > 0:
-            choices = keys - {recentDK.pop()}
+            choices = keys - {recentDK[-1]}
         else:
             choices = keys
         minInterval = deck[min(
@@ -106,13 +106,20 @@ def main():
             choices)))
         if dk in recentDK:
             quality = 5
-            boringDK.append(dk)
         elif dk in boringDK:
             quality = random.randint(org_drill_failure_quality + 1, 5)
         else:
             quality = random.randint(0, 5)
         ret = deck[dk].learn(quality)
-        print('"{}" [{:g}, {:g}]'.format(dk, ret.ease, ret.mq))
+        print('"{}" [{:g}, {:g}, {:g}]'.format(
+            dk, ret.lastInterval, ret.ease, ret.mq))
+        if dk in boringDK:
+            boringDK.remove(dk)
+        if 0 < len(recentDK):
+            if dk in recentDK:
+                recentDK.remove(dk)
+            else:
+                boringDK.append(recentDK.pop())
         recentDK.append(dk)
 
 
