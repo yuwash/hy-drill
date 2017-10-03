@@ -371,7 +371,7 @@
 ;;; Over time, values in the matrix will adapt to the individual user's
 ;;; pace of learning."
 (def org-drill-sm5-optimal-factor-matrix
-  None)
+  {})
 
 
 (or (in 'savehist-additional-variables
@@ -638,7 +638,7 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
     ef))
 
 (defn get-optimal-factor-sm5 (n ef of-matrix)
-  (do (setv factors (get of-matrix n))
+  (do (setv factors (try (get of-matrix n) (except [[KeyError IndexError]] None)))
     (or (and factors
              (do (setv ef-of (get (drop 1 factors) ef))
                (and ef-of (drop 1 ef-of))))
@@ -694,8 +694,9 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
      ;; "Failed" -- reset repetitions to 0,
      [(<= quality org-drill-failure-quality)
       (list* -1 1 old-ef (inc failures) meanq (inc total-repeats)
-            of-matrix)]     ; Not clear if OF matrix is supposed to be
+            of-matrix       ; Not clear if OF matrix is supposed to be
                                         ; preserved
+            None)]
      ;; For a zero-based quality of 4 or 5, don't repeat
      ;; ((and (>= quality 4)
      ;;       (not org-learn-always-reschedule))
@@ -712,7 +713,8 @@ Returns a list: (INTERVAL REPEATS EF FAILURES MEAN TOTAL-REPEATS OFMATRIX), wher
             failures
             meanq
             (inc total-repeats)
-            of-matrix)])))
+            of-matrix 
+            None)])))
 
 
 ;;; Simple8 Algorithm =========================================================

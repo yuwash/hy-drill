@@ -67,7 +67,7 @@
 
 (defn set-optimal-factor (n ef of-matrix of)
   (do
-    (setv factors (get of-matrix n))
+    (setv factors (try (get of-matrix n) (except [[KeyError IndexError]] None)))
     (if factors
        (do
          (setv ef-of (get (cdr factors) ef))
