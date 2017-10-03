@@ -81,6 +81,13 @@ class LearningItemSimple8(AbstractLearningItem):
             self.total))
 
 
+def randgammaint(a, b, alpha=2.5, beta=1):
+    r = a + random.gammavariate(alpha, beta)
+    if b < r:
+        return b
+    return int(r)
+
+
 def main():
     # example
     keys = {
@@ -109,7 +116,7 @@ def main():
         elif dk in boringDK:
             quality = random.randint(org_drill_failure_quality + 1, 5)
         else:
-            quality = random.randint(0, 5)
+            quality = randgammaint(1, 5)
         ret = deck[dk].learn(quality)
         print('"{}" [{:g}, {:g}, {:g}]'.format(
             dk, ret.lastInterval, ret.ease, ret.mq))
