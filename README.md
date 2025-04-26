@@ -1,3 +1,6 @@
+🪦 This project is now archived as this is no longer my priority. Also I now found that the excellent https://github.com/open-spaced-repetition/py-fsrs project provides multiple spaced repetition algorithms in Python including SM-2 which this project would’ve provided.
+|--|
+
 # Customisation
 
 Org-Drill has several settings which you change using
